@@ -139,3 +139,19 @@ Disambiguation strategy:
 - [ ] Fission conflict is detected and resolved via UI
 - [ ] Final video includes all required demonstrations
 - [ ] Final video size is under 20MB
+
+---
+
+## Implemented repository scaffold (modular)
+
+This repository now includes modular Unity-ready C# scaffolding:
+
+- `/home/runner/work/MMI-2026-Project/MMI-2026-Project/UnityProject/Assets/Scripts/Core`
+- `/home/runner/work/MMI-2026-Project/MMI-2026-Project/UnityProject/Assets/Scripts/Input`
+- `/home/runner/work/MMI-2026-Project/MMI-2026-Project/UnityProject/Assets/Scripts/Managers`
+- `/home/runner/work/MMI-2026-Project/MMI-2026-Project/UnityProject/Assets/Scripts/Interactables`
+- `/home/runner/work/MMI-2026-Project/MMI-2026-Project/UnityProject/Assets/Scripts/UI`
+
+And a practical setup guide:
+
+- `/home/runner/work/MMI-2026-Project/MMI-2026-Project/docs/STEP_BY_STEP_IMPLEMENTATION.md`
