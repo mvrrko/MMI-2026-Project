@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 using MMI2026.LabEscape.Core;
 using MMI2026.LabEscape.UI;
 using UnityEngine;
@@ -14,6 +15,7 @@ namespace MMI2026.LabEscape.Managers
         [SerializeField] private CommandFeedbackUI feedbackUI;
 
         private readonly List<ICommandSource> resolvedSources = new List<ICommandSource>();
+        public event Action<CommandData> OnCommandResolved;
 
         private void Awake()
         {
@@ -81,6 +83,7 @@ namespace MMI2026.LabEscape.Managers
             if (command == null) return;
             objectiveManager?.HandleCommand(command);
             feedbackUI?.Show(command);
+            OnCommandResolved?.Invoke(command);
         }
     }
 }

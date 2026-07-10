@@ -8,20 +8,29 @@ namespace MMI2026.LabEscape.Managers
     public class ObjectiveManager : MonoBehaviour
     {
         [SerializeField] private Text statusText;
+        [SerializeField] private Text completionText;
 
         public bool HasKeycard { get; private set; }
         public bool GeneratorActive { get; private set; }
         public bool ExitDoorUnlocked { get; private set; }
         public bool ExitDoorOpen { get; private set; }
+        public bool IsCompleted => ExitDoorOpen;
+
+        public event Action OnEscapeCompleted;
 
         private void Start()
         {
             RenderStatus();
+            if (completionText != null)
+            {
+                completionText.text = string.Empty;
+            }
         }
 
         public void HandleCommand(CommandData command)
         {
             if (command == null) return;
+            var wasCompleted = IsCompleted;
 
             switch (command.Action)
             {
@@ -43,6 +52,14 @@ namespace MMI2026.LabEscape.Managers
             }
 
             RenderStatus();
+            if (!wasCompleted && IsCompleted)
+            {
+                if (completionText != null)
+                {
+                    completionText.text = "Escape complete! Final product ready for recording.";
+                }
+                OnEscapeCompleted?.Invoke();
+            }
         }
 
         private void HandleInteract(string targetId)

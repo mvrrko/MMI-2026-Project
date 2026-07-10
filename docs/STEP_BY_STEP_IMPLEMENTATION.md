@@ -19,16 +19,19 @@ This repository now contains a modular Unity-ready script scaffold under:
 2. Add `FusionManager` to `Managers`.
 3. Add `ConflictResolutionManager` to `Managers`.
 4. Add `ObjectiveManager` to `Managers`.
-5. In `InputRouter`, assign:
+5. Add `InteractableExecutionManager` to `Managers`.
+6. In `InputRouter`, assign:
    - `FusionManager`
    - `ConflictResolutionManager`
    - `ObjectiveManager`
+6. In `InteractableExecutionManager`, assign `InputRouter` and keep `Auto Find Interactables` enabled (or manually bind all interactables).
 
 ## Step 3: Set up modality sources
 1. Add `KeyboardMouseInputSource` to `Player` (or `Managers`).
 2. Add `VoiceInputSource` to `Managers`.
 3. Register both in `InputRouter -> Command Sources`.
-4. Optionally assign a target transform to `KeyboardMouseInputSource` for pointing target ID.
+4. In `KeyboardMouseInputSource`, set `Pointer Camera` (usually player camera) and adjust `Pointer Distance` so center-screen raycast can detect interactables.
+5. (Optional fallback) assign a target transform to `KeyboardMouseInputSource` if you do not want raycast targeting.
 
 ## Step 4: Set up gameplay objects
 1. Create object `Keycard` with `KeycardInteractable`.
@@ -40,11 +43,13 @@ This repository now contains a modular Unity-ready script scaffold under:
 ## Step 5: Set up UI
 1. Add text UI for command feedback and bind to `CommandFeedbackUI`.
 2. Add text UI for objective states and bind to `ObjectiveManager.statusText`.
-3. Add panel/text for conflict prompts and bind to `ConflictResolutionUI`.
-4. Wire conflict buttons to:
+3. Add text UI for completion message and bind to `ObjectiveManager.completionText`.
+4. Add panel/text for conflict prompts and bind to `ConflictResolutionUI`.
+5. Wire conflict buttons to:
    - `ChoosePointerTarget()`
    - `ChooseVoiceTarget()`
    - `CancelChoice()`
+6. Add a win panel and bind it to `WinStateUI` (`ObjectiveManager` + `winPanel`) so final completion is clearly visible in recording.
 
 ## Step 6: Task 1 delivery
 1. Use keyboard/mouse only.
@@ -73,6 +78,28 @@ This repository now contains a modular Unity-ready script scaffold under:
    - fusion
    - fission
 2. Compress output as needed for submission limits.
+
+## Step 10: Final validation run (single final-product check)
+1. Keyboard/mouse only run:
+   - pick keycard with `E` or left click
+   - activate generator
+   - unlock/open exit door
+2. Voice only run:
+   - `pick up keycard`
+   - `activate generator`
+   - `unlock door`
+   - `open door`
+3. Fusion check:
+   - point at exit door and say `unlock this`
+4. Fission check:
+   - set pointer on one target, speak command for another target, verify conflict popup choices and timeout cancel behavior.
+
+## Step 11: Desktop build + submission prep
+1. In Unity Build Settings, target `PC, Mac & Linux Standalone` and build desktop executable.
+2. Record one uninterrupted walkthrough showing concept, both single modalities, fusion, fission, and win state.
+3. Compress video to `<20MB` (example ffmpeg):
+   - `ffmpeg -i input.mp4 -vcodec libx264 -crf 32 -preset veryslow -acodec aac -b:a 96k final_submission.mp4`
+4. Re-check final file size and playback quality before upload.
 
 ## Extension points
 - Add new modalities by implementing `ICommandSource`.

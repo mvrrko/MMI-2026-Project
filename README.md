@@ -155,3 +155,11 @@ This repository now includes modular Unity-ready C# scaffolding:
 And a practical setup guide:
 
 - `/home/runner/work/MMI-2026-Project/MMI-2026-Project/docs/STEP_BY_STEP_IMPLEMENTATION.md`
+
+## Final-product readiness updates
+
+The scaffold now also includes:
+- runtime center-screen raycast targeting for keyboard/mouse interaction
+- `InteractableExecutionManager` to execute resolved commands on scene interactables
+- win-state signaling (`ObjectiveManager.OnEscapeCompleted`) and `WinStateUI` support
+- updated implementation guide steps for final validation, desktop build, and video compression
