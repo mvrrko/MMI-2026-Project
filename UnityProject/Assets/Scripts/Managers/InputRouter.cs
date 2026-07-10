@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 using MMI2026.LabEscape.Core;
 using MMI2026.LabEscape.UI;
 using UnityEngine;
@@ -14,9 +15,15 @@ namespace MMI2026.LabEscape.Managers
         [SerializeField] private CommandFeedbackUI feedbackUI;
 
         private readonly List<ICommandSource> resolvedSources = new List<ICommandSource>();
+        public event Action<CommandData> OnCommandResolved;
 
         private void Awake()
         {
+            if (conflictResolutionManager != null)
+            {
+                conflictResolutionManager.OnCommandResolved += HandleResolvedCommand;
+            }
+
             resolvedSources.Clear();
             foreach (var source in commandSources)
             {
@@ -41,6 +48,10 @@ namespace MMI2026.LabEscape.Managers
         private void OnDestroy()
         {
             foreach (var source in resolvedSources) source.OnCommand -= HandleIncomingCommand;
+            if (conflictResolutionManager != null)
+            {
+                conflictResolutionManager.OnCommandResolved -= HandleResolvedCommand;
+            }
         }
 
         private void HandleIncomingCommand(CommandData command)
@@ -49,6 +60,7 @@ namespace MMI2026.LabEscape.Managers
 
             if (command.SourceModality == ModalityType.KeyboardMouse)
             {
+                fusionManager?.TrackPointerContext(command);
                 conflictResolutionManager?.TrackPointerContext(command);
             }
 
@@ -57,11 +69,21 @@ namespace MMI2026.LabEscape.Managers
 
             if (fused.SourceModality == ModalityType.Voice && conflictResolutionManager != null)
             {
-                conflictResolutionManager.TryResolveConflict(fused, out fused);
+                if (!conflictResolutionManager.TryResolveConflict(fused, out fused))
+                {
+                    return;
+                }
             }
 
-            objectiveManager?.HandleCommand(fused);
-            feedbackUI?.Show(fused);
+            HandleResolvedCommand(fused);
+        }
+
+        private void HandleResolvedCommand(CommandData command)
+        {
+            if (command == null) return;
+            objectiveManager?.HandleCommand(command);
+            feedbackUI?.Show(command);
+            OnCommandResolved?.Invoke(command);
         }
     }
 }

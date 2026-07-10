@@ -10,6 +10,11 @@ namespace MMI2026.LabEscape.Input
 {
     public class VoiceInputSource : MonoBehaviour, ICommandSource
     {
+        [Header("Optional editor fallback")]
+        [SerializeField] private bool enableEditorFallbackInput;
+        [SerializeField] private string fallbackPhrase = "unlock this";
+        [SerializeField] private KeyCode fallbackSubmitKey = KeyCode.Return;
+
         public event Action<CommandData> OnCommand;
 
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
@@ -31,6 +36,14 @@ namespace MMI2026.LabEscape.Input
         private void OnEnable() => StartListening();
         private void OnDisable() => StopListening();
 
+        private void Update()
+        {
+            if (!enableEditorFallbackInput) return;
+            if (!UnityEngine.Input.GetKeyDown(fallbackSubmitKey)) return;
+
+            ParseAndEmit(fallbackPhrase);
+        }
+
         public void StartListening()
         {
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
@@ -38,6 +51,8 @@ namespace MMI2026.LabEscape.Input
             keywordRecognizer = new KeywordRecognizer(new List<string>(commands.Keys).ToArray());
             keywordRecognizer.OnPhraseRecognized += HandlePhrase;
             keywordRecognizer.Start();
+#else
+            EmitFailure("voice:error: keyword recognizer unavailable on this platform");
 #endif
         }
 
@@ -55,10 +70,26 @@ namespace MMI2026.LabEscape.Input
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
         private void HandlePhrase(PhraseRecognizedEventArgs args)
         {
-            if (!commands.TryGetValue(args.text, out var mapped)) return;
-            Emit(mapped.action, mapped.targetId, args.text);
+            ParseAndEmit(args.text);
         }
 #endif
+
+        public void ParseAndEmit(string spokenText)
+        {
+            if (string.IsNullOrWhiteSpace(spokenText))
+            {
+                EmitFailure("voice:error: empty command");
+                return;
+            }
+
+            if (!commands.TryGetValue(spokenText.Trim(), out var mapped))
+            {
+                EmitFailure($"voice:error: unrecognized command '{spokenText}'");
+                return;
+            }
+
+            Emit(mapped.action, mapped.targetId, spokenText);
+        }
 
         private void Emit(GameActionType action, string targetId, string raw)
         {
@@ -70,6 +101,11 @@ namespace MMI2026.LabEscape.Input
                 SourceModality = ModalityType.Voice,
                 TimestampUtc = DateTime.UtcNow
             });
+        }
+
+        private void EmitFailure(string message)
+        {
+            Emit(GameActionType.None, string.Empty, message);
         }
     }
 }

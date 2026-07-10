@@ -7,12 +7,27 @@ namespace MMI2026.LabEscape.UI
     public class CommandFeedbackUI : MonoBehaviour
     {
         [SerializeField] private Text feedbackText;
+        [SerializeField] private bool showRawCommandDetails;
 
         public void Show(CommandData command)
         {
             if (feedbackText == null || command == null) return;
-            feedbackText.text =
-                $"[{command.SourceModality}] {command.Action} target={command.TargetId} raw=\"{command.RawCommand}\"";
+            var source = command.SourceModality == ModalityType.Voice ? "Voice" : "Keyboard/Mouse";
+            var target = string.IsNullOrWhiteSpace(command.TargetId) ? "none" : command.TargetId;
+
+            if (command.Action == GameActionType.None)
+            {
+                feedbackText.text = $"{source} -> failed";
+            }
+            else
+            {
+                feedbackText.text = $"{source} -> {command.Action} ({target})";
+            }
+
+            if (showRawCommandDetails)
+            {
+                feedbackText.text += $"\nraw: {command.RawCommand}";
+            }
         }
     }
 }

@@ -4,14 +4,21 @@ using UnityEngine.UI;
 
 namespace MMI2026.LabEscape.UI
 {
+    public enum ConflictChoice
+    {
+        Pointer = 0,
+        Voice = 1,
+        Cancel = 2
+    }
+
     public class ConflictResolutionUI : MonoBehaviour
     {
         [SerializeField] private GameObject panel;
         [SerializeField] private Text messageText;
 
-        private Action<bool> pendingCallback;
+        private Action<ConflictChoice> pendingCallback;
 
-        public void Show(string message, Action<bool> onChoice)
+        public void Show(string message, Action<ConflictChoice> onChoice)
         {
             pendingCallback = onChoice;
             if (messageText != null) messageText.text = message;
@@ -20,24 +27,28 @@ namespace MMI2026.LabEscape.UI
 
         public void ChoosePointerTarget()
         {
-            CloseWithChoice(true);
+            CloseWithChoice(ConflictChoice.Pointer);
         }
 
         public void ChooseVoiceTarget()
         {
-            CloseWithChoice(false);
+            CloseWithChoice(ConflictChoice.Voice);
         }
 
         public void CancelChoice()
         {
-            pendingCallback?.Invoke(false);
+            CloseWithChoice(ConflictChoice.Cancel);
+        }
+
+        public void Hide()
+        {
             pendingCallback = null;
             if (panel != null) panel.SetActive(false);
         }
 
-        private void CloseWithChoice(bool usePointer)
+        private void CloseWithChoice(ConflictChoice choice)
         {
-            pendingCallback?.Invoke(usePointer);
+            pendingCallback?.Invoke(choice);
             pendingCallback = null;
             if (panel != null) panel.SetActive(false);
         }

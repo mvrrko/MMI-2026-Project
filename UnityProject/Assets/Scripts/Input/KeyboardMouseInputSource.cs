@@ -6,7 +6,10 @@ namespace MMI2026.LabEscape.Input
 {
     public class KeyboardMouseInputSource : MonoBehaviour, ICommandSource
     {
+        [Header("Pointer targeting")]
         [SerializeField] private Transform currentPointerTarget;
+        [SerializeField] private CenterScreenTargetResolver targetResolver;
+
         public event Action<CommandData> OnCommand;
 
         public void StartListening() { }
@@ -22,6 +25,11 @@ namespace MMI2026.LabEscape.Input
             if (UnityEngine.Input.GetKeyDown(KeyCode.E))
             {
                 Emit(GameActionType.Interact, ResolvePointerTargetId(), "keyboard:E");
+            }
+
+            if (UnityEngine.Input.GetMouseButtonDown(0))
+            {
+                Emit(GameActionType.Interact, ResolvePointerTargetId(), "mouse:left");
             }
         }
 
@@ -39,6 +47,11 @@ namespace MMI2026.LabEscape.Input
 
         private string ResolvePointerTargetId()
         {
+            if (targetResolver != null && targetResolver.TryGetCurrentTarget(out var resolvedTarget))
+            {
+                return resolvedTarget;
+            }
+
             return currentPointerTarget == null ? string.Empty : currentPointerTarget.name;
         }
     }
