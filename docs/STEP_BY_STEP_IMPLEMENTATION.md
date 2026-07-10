@@ -35,11 +35,16 @@ This repository now contains a modular Unity-ready script scaffold under:
 2. Create object `Generator` with `GeneratorInteractable`.
 3. Create object `Door_Exit` with `DoorInteractable`.
 4. Set object IDs to match command target IDs where needed.
+5. Ensure pointer target names match command targets (`Keycard`, `Generator`, `Door_Exit`) so keyboard `E` interact can complete the full objective chain.
 
 ## Step 5: Set up UI
 1. Add text UI for command feedback and bind to `CommandFeedbackUI`.
 2. Add text UI for objective states and bind to `ObjectiveManager.statusText`.
 3. Add panel/text for conflict prompts and bind to `ConflictResolutionUI`.
+4. Wire conflict buttons to:
+   - `ChoosePointerTarget()`
+   - `ChooseVoiceTarget()`
+   - `CancelChoice()`
 
 ## Step 6: Task 1 delivery
 1. Use keyboard/mouse only.
