@@ -8,9 +8,7 @@ namespace MMI2026.LabEscape.Input
     {
         [Header("Pointer targeting")]
         [SerializeField] private Transform currentPointerTarget;
-        [SerializeField] private Camera pointerCamera;
-        [SerializeField] private float pointerDistance = 4.0f;
-        [SerializeField] private LayerMask pointerMask = ~0;
+        [SerializeField] private CenterScreenTargetResolver targetResolver;
 
         public event Action<CommandData> OnCommand;
 
@@ -49,25 +47,12 @@ namespace MMI2026.LabEscape.Input
 
         private string ResolvePointerTargetId()
         {
-            if (TryResolveRaycastTarget(out var raycastTarget))
+            if (targetResolver != null && targetResolver.TryGetCurrentTarget(out var resolvedTarget))
             {
-                return raycastTarget;
+                return resolvedTarget;
             }
 
             return currentPointerTarget == null ? string.Empty : currentPointerTarget.name;
-        }
-
-        private bool TryResolveRaycastTarget(out string targetId)
-        {
-            targetId = string.Empty;
-            var activeCamera = pointerCamera != null ? pointerCamera : Camera.main;
-            if (activeCamera == null) return false;
-
-            var ray = activeCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-            if (!Physics.Raycast(ray, out var hitInfo, pointerDistance, pointerMask)) return false;
-
-            targetId = hitInfo.transform.name;
-            return !string.IsNullOrWhiteSpace(targetId);
         }
     }
 }

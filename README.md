@@ -148,6 +148,7 @@ This repository now includes modular Unity-ready C# scaffolding:
 
 - `/home/runner/work/MMI-2026-Project/MMI-2026-Project/UnityProject/Assets/Scripts/Core`
 - `/home/runner/work/MMI-2026-Project/MMI-2026-Project/UnityProject/Assets/Scripts/Input`
+- `/home/runner/work/MMI-2026-Project/MMI-2026-Project/UnityProject/Assets/Scripts/Player`
 - `/home/runner/work/MMI-2026-Project/MMI-2026-Project/UnityProject/Assets/Scripts/Managers`
 - `/home/runner/work/MMI-2026-Project/MMI-2026-Project/UnityProject/Assets/Scripts/Interactables`
 - `/home/runner/work/MMI-2026-Project/MMI-2026-Project/UnityProject/Assets/Scripts/UI`
@@ -160,6 +161,8 @@ And a practical setup guide:
 
 The scaffold now also includes:
 - runtime center-screen raycast targeting for keyboard/mouse interaction
+- reusable `CenterScreenTargetResolver` + first-person movement/look controllers for baseline playability
 - `InteractableExecutionManager` to execute resolved commands on scene interactables
 - win-state signaling (`ObjectiveManager.OnEscapeCompleted`) and `WinStateUI` support
+- voice parser failure reporting (`GameActionType.None`) surfaced through `CommandFeedbackUI`
 - updated implementation guide steps for final validation, desktop build, and video compression

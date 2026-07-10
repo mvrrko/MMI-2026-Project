@@ -15,7 +15,15 @@ namespace MMI2026.LabEscape.UI
             var source = command.SourceModality == ModalityType.Voice ? "Voice" : "Keyboard/Mouse";
             var target = string.IsNullOrWhiteSpace(command.TargetId) ? "none" : command.TargetId;
 
-            feedbackText.text = $"{source} -> {command.Action} ({target})";
+            if (command.Action == GameActionType.None)
+            {
+                feedbackText.text = $"{source} -> failed";
+            }
+            else
+            {
+                feedbackText.text = $"{source} -> {command.Action} ({target})";
+            }
+
             if (showRawCommandDetails)
             {
                 feedbackText.text += $"\nraw: {command.RawCommand}";

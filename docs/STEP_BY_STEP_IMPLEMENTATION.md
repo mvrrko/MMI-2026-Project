@@ -5,7 +5,7 @@ This repository now contains a modular Unity-ready script scaffold under:
 `/home/runner/work/MMI-2026-Project/MMI-2026-Project/UnityProject/Assets/Scripts`
 
 ## Step 1: Create Unity scene shell
-1. Create a new 3D Unity project.
+1. Create a new **3D (URP)** Unity project.
 2. Copy the `UnityProject/Assets/Scripts` folder into your Unity project's `Assets`.
 3. Create one scene named `LabEscape_Main`.
 4. Add empty GameObjects:
@@ -24,14 +24,17 @@ This repository now contains a modular Unity-ready script scaffold under:
    - `FusionManager`
    - `ConflictResolutionManager`
    - `ObjectiveManager`
-6. In `InteractableExecutionManager`, assign `InputRouter` and keep `Auto Find Interactables` enabled (or manually bind all interactables).
+7. In `InteractableExecutionManager`, assign `InputRouter` and keep `Auto Find Interactables` enabled (or manually bind all interactables).
 
 ## Step 3: Set up modality sources
-1. Add `KeyboardMouseInputSource` to `Player` (or `Managers`).
-2. Add `VoiceInputSource` to `Managers`.
-3. Register both in `InputRouter -> Command Sources`.
-4. In `KeyboardMouseInputSource`, set `Pointer Camera` (usually player camera) and adjust `Pointer Distance` so center-screen raycast can detect interactables.
-5. (Optional fallback) assign a target transform to `KeyboardMouseInputSource` if you do not want raycast targeting.
+1. Add `CenterScreenTargetResolver` to `Player` and set `Pointer Camera` to your FPS camera.
+2. Add `KeyboardMouseInputSource` to `Player` (or `Managers`), assign the resolver in `Target Resolver`.
+3. Add `FirstPersonMovementController` to `Player` (requires `CharacterController`).
+4. Add `FirstPersonLookController` to the player camera and assign `Player Body` to the `Player` transform.
+5. Keep Unity's `Horizontal`, `Vertical`, `Mouse X`, and `Mouse Y` axes in Input Manager defaults.
+6. Add `VoiceInputSource` to `Managers`.
+7. Register both in `InputRouter -> Command Sources`.
+8. In `VoiceInputSource`, optional editor fallback lets you test parsing by pressing Enter on `Fallback Phrase`.
 
 ## Step 4: Set up gameplay objects
 1. Create object `Keycard` with `KeycardInteractable`.
@@ -42,14 +45,15 @@ This repository now contains a modular Unity-ready script scaffold under:
 
 ## Step 5: Set up UI
 1. Add text UI for command feedback and bind to `CommandFeedbackUI`.
-2. Add text UI for objective states and bind to `ObjectiveManager.statusText`.
-3. Add text UI for completion message and bind to `ObjectiveManager.completionText`.
-4. Add panel/text for conflict prompts and bind to `ConflictResolutionUI`.
-5. Wire conflict buttons to:
+2. Enable `showRawCommandDetails` so voice failures and parser errors are visible during demos.
+3. Add text UI for objective states and bind to `ObjectiveManager.statusText`.
+4. Add text UI for completion message and bind to `ObjectiveManager.completionText`.
+5. Add panel/text for conflict prompts and bind to `ConflictResolutionUI`.
+6. Wire conflict buttons to:
    - `ChoosePointerTarget()`
    - `ChooseVoiceTarget()`
    - `CancelChoice()`
-6. Add a win panel and bind it to `WinStateUI` (`ObjectiveManager` + `winPanel`) so final completion is clearly visible in recording.
+7. Add a win panel and bind it to `WinStateUI` (`ObjectiveManager` + `winPanel`) so final completion is clearly visible in recording.
 
 ## Step 6: Task 1 delivery
 1. Use keyboard/mouse only.
